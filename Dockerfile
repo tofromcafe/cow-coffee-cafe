@@ -24,10 +24,14 @@ COPY . .
 # This creates optimized, minified files in the 'dist' directory
 RUN npm run build
 
-# Expose port 4173 (Vite's preview port)
-# This tells Docker that our app will listen on this port
+# Install 'serve' - a simple static file server for production
+# This is much better than vite preview for production deployments
+RUN npm install -g serve
+
+# Expose port 4173 to match our existing setup
 EXPOSE 4173
 
-# Define the command to run when the container starts
-# This starts Vite's preview server which serves our built app
-CMD ["npm", "run", "preview", "--", "--host", "0.0.0.0"]
+# Serve the built static files from the dist directory
+# -s = single page app mode (handles client-side routing)
+# -l 4173 = listen on port 4173
+CMD ["serve", "-s", "dist", "-l", "4173"]
